@@ -1,13 +1,13 @@
 class UserController {
-    async registration(){
+    async registration(req, res, next) {
 
     }
 
-    async login() {
+    async login(req, res, next) {
 
     }
 
-    async check() {
+    async check(req, res, next) {
 
     }
 }
