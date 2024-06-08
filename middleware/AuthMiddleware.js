@@ -1,25 +1,30 @@
-import jwt from 'jsonwebtoken';
+import TokenService from '../service/TokenService.js';
+import ApiError from '../error/ApiError.js';
 
-export default function(role) {
-    return function(req, res, next) {
-        if (req.method === 'OPTIONS') {
-            next();
-        }
-    
-        try {
-            const token = req.headers.authorization.split(' ')[1];
-            if (!token) {
-                return res.status(401).json({ message: 'Не авторизован' });
-            }
-    
-            const decoded = jwt.verify(token, process.env.JWT_SECRET_ACCESS_TOKEN);
-            if (decoded.role !== role) {
-                return res.status(403).json({ message: 'Нет доступа' });
-            }
-            req.user = decoded;
-            next();
-        } catch (e) {
-            res.status(401).json({ message: 'Не авторизован' });
-        } 
+export default function(req, res, next) {
+    try {
+        const authorizationHeader = req.headers.authorization;
+        if (!authorizationHeader) {
+            return next(ApiError.unauthorizedError());
+        };
+
+        const accessToken = authorizationHeader.split(' ')[1];
+        if(!accessToken) {
+            return next(ApiError.unauthorizedError());
+        };
+
+        const userData = TokenService.validateAccessToken(accessToken);
+        if (!userData) {
+            return next(ApiError.unauthorizedError());
+        };
+
+        if (userData.role !== 'ADMIN') {
+            return next(ApiError.forbidden('Нет доступа'));
+        };
+
+        req.user = userData;
+        next();
+    } catch(err) {
+        return next(ApiError.unauthorizedError());
     }
 };

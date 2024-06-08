@@ -1,11 +1,21 @@
+import { body } from 'express-validator';
 import { Router } from "express";
-import AuthMiddleware from "../middleware/AuthMiddleware.js";
 import UserController from "../controllers/UserController.js";
 
 const router = new Router();
 
-router.post('/registration', UserController.registration);
-router.post('/login', UserController.login);
-router.get('/auth', AuthMiddleware, UserController.check);
+router.post('/registration',
+    body('email').isEmail(),
+    body('name').isLength({ min: 3, max: 32 }),
+    body('password').isLength({ min: 3, max: 32 }),
+    UserController.registration
+);
+router.post('/login',
+    body('email').isEmail(),
+    body('password').isLength({ min: 3, max: 32 }),
+    UserController.login
+);
+router.post('/logout', UserController.logout);
+router.get('/refresh', UserController.refresh);
 
 export default router;

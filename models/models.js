@@ -17,10 +17,20 @@ const Application = sequelize.define('application', {
     comment: { type: DataTypes.STRING },
 });
 
+const Token = sequelize.define('token', {
+    id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
+    user_id: { type: DataTypes.INTEGER },
+    refreshToken: { type: DataTypes.STRING },
+});
+
 User.hasMany(Application);
 Application.belongsTo(User);
 
+User.hasOne(Token);
+Token.belongsTo(User);
+
 export {
     User,
-    Application
+    Application,
+    Token
 };

@@ -5,6 +5,6 @@ import UserRouter from './UserRoter.js';
 const router = new Router();
 
 router.use('/user', UserRouter);
-// router.use('/application', ApplicationRouter);
+router.use('/application', ApplicationRouter);
 
 export default router;
