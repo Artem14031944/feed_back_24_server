@@ -1,4 +1,5 @@
 import ApplicationService from '../service/ApplicationService.js';
+import UserService from '../service/UserService.js';
 
 class ApplicationController {
     async create(req, res, next) {
@@ -26,7 +27,19 @@ class ApplicationController {
     async getAll(req, res, next) {
         try {
             const applications = await ApplicationService.getAll();
-            return res.json(applications);
+            const users = await UserService.getAll();
+
+            const applicationsDto = applications.map(app => ({
+                id: app.id,
+                email: users.filter(u => u.id === app.user_id)[0]?.email,
+                comment: app.comment,
+                message: app.message,
+                status: app.status,
+                role: app.role,
+                createdAt: app.createdAt,
+            }));
+       
+            return res.json(applicationsDto);
         } catch (err) {
             next(err);
         };
@@ -35,8 +48,6 @@ class ApplicationController {
     async delete(req, res, next) {
         try {
             const { id } = req.params;
-            console.log(id, 'id');
-
             const deletedApplication = await ApplicationService.delete(id);
             
             return res.json(deletedApplication);

@@ -9,7 +9,7 @@ class UserDto {
         this.email = model.email;
         this.name = model.name;
         this.role = model.role;
-    }
-}
+    };
+};
 
 export default UserDto;

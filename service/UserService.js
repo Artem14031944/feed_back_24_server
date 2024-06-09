@@ -65,8 +65,13 @@ class UserService {
     };
 
     async findOne(email) {
-        const user = User.findOne({ where: { email } });
+        const user = await User.findOne({ where: { email } });
         return user;
+    };
+
+    async getAll() {
+        const users = await User.findAll();
+        return users;
     };
 
     async logout(refreshToken) {
