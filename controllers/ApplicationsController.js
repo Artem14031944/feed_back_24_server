@@ -1,5 +1,4 @@
 import ApplicationService from '../service/ApplicationService.js';
-import UserService from '../service/UserService.js';
 
 class ApplicationController {
     async create(req, res, next) {
@@ -16,9 +15,9 @@ class ApplicationController {
     async resolved(req, res, next) {
         try {
             const { id } = req.params;
-            await ApplicationService.resolved(req.body, id);
+            const applications = await ApplicationService.resolved(req.body, id);
     
-            return res.json({ message: 'Заявка рассмотрена' });
+            return res.json({ message: 'Заявка рассмотрена', applications });
         } catch (err) {
             next(err);
         };

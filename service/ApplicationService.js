@@ -22,10 +22,13 @@ class ApplicattionService {
 
         const user = await User.findOne({where: { id : application.user_id }});
         const uesrDto = new UserDto(user);
-        const link = `${process.env.API_URL}/api/${v4()}`;
+        const link = `${process.env.CLIENT_URL}/api/${v4()}`;
 
-        // await MailService.sendActivationMail(uesrDto, link);
+        await MailService.sendActivationMail(uesrDto, link, {... reqBody});
         await Application.update({ ...reqBody, status: 'Resolved' }, { where: { id } });
+
+        const allApplication = this.getAll();
+        return allApplication;
     };
 
     async findOne(id) {
@@ -35,17 +38,21 @@ class ApplicattionService {
 
     async getAll(sort, limit, page) {
         let checkSort = ['ASC', 'DESC'];
-        let sortBy = [sort?.split(',')].includes();
+        let sortBy = [sort?.split(',')];
 
-        if (!checkSort.includes(sort?.split(',')[1])) {
+        if (sortBy.includes(undefined)) {
+            sortBy = null;
+        };
+
+        if (sort?.split(',').length > 1 && !checkSort.includes(sort?.split(',')[1])) {
             throw ApiError.badRequest('Есть только ASC или DESC сортировка');
         };
 
         page = +page || 1;
-        limit = +limit || 8;
+        limit = +limit || 25;
         sort = sortBy || ['createdAt', 'ASC'];
         let offset = page * limit - limit;
-    
+
         const users = await UserService.getAll();
         const applications = await Application.findAll({
             limit,

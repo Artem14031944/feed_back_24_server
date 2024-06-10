@@ -14,7 +14,7 @@ class MailService {
         });
     };
 
-    async sendActivationMail(user, link) {
+    async sendActivationMail(user, link, answer) {
         try {
             await this.transporter.sendMail({
                 from: process.env.SMTP_USER,
@@ -24,16 +24,17 @@ class MailService {
                 html: 
                 `
                     <div>
-                        <h1>Добрый день ${user.name}</h1>
+                        <h1>Добрый день ${user?.name}</h1>
                         <p>Ваша заявка расcмотренна, можете перейти по ссылке</p>
                         <a href="${link}">${link}</a>
+                        <p>Ответ: ${answer?.comment}</p>
                     </div>
                 `
             });
         } catch (e) {
-            throw ApiError.internal('Ошибка при отправки сообщение');
+            throw ApiError.internal(`Ошибка при отправки сообщение: ${e}`);
         }
     };
-}
+};
 
 export default new MailService(); 
