@@ -26,20 +26,9 @@ class ApplicationController {
 
     async getAll(req, res, next) {
         try {
-            const applications = await ApplicationService.getAll();
-            const users = await UserService.getAll();
-
-            const applicationsDto = applications.map(app => ({
-                id: app.id,
-                email: users.filter(u => u.id === app.user_id)[0]?.email,
-                comment: app.comment,
-                message: app.message,
-                status: app.status,
-                role: app.role,
-                createdAt: app.createdAt,
-            }));
-       
-            return res.json(applicationsDto);
+            let { sort, page, limit } = req.query;
+            const applications = await ApplicationService.getAll(sort, limit, page);
+            return res.json(applications);
         } catch (err) {
             next(err);
         };
@@ -55,6 +44,6 @@ class ApplicationController {
             next(err);
         };
     };
-}
+};
 
 export default new ApplicationController();

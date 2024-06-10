@@ -1,6 +1,7 @@
 import { Application, User } from "../models/models.js"; 
 import { v4 } from 'uuid';
-import MailService from '../service/MailService.js'
+import MailService from '../service/MailService.js';
+import UserService from '../service/UserService.js';
 import ApiError from '../error/ApiError.js';
 import UserDto from "../dtos/userDto.js";
 
@@ -10,7 +11,6 @@ class ApplicattionService {
         if (!application) {
             throw ApiError.badRequest('Не удалось создать заявку');
         };
-
         return application;
     };
 
@@ -24,8 +24,8 @@ class ApplicattionService {
         const uesrDto = new UserDto(user);
         const link = `${process.env.API_URL}/api/${v4()}`;
 
+        // await MailService.sendActivationMail(uesrDto, link);
         await Application.update({ ...reqBody, status: 'Resolved' }, { where: { id } });
-        await MailService.sendActivationMail(uesrDto, link);
     };
 
     async findOne(id) {
@@ -33,9 +33,37 @@ class ApplicattionService {
         return application;
     };
 
-    async getAll() {
-        const applications = await Application.findAll();
-        return applications;
+    async getAll(sort, limit, page) {
+        let checkSort = ['ASC', 'DESC'];
+        let sortBy = [sort?.split(',')].includes();
+
+        if (!checkSort.includes(sort?.split(',')[1])) {
+            throw ApiError.badRequest('Есть только ASC или DESC сортировка');
+        };
+
+        page = +page || 1;
+        limit = +limit || 8;
+        sort = sortBy || ['createdAt', 'ASC'];
+        let offset = page * limit - limit;
+    
+        const users = await UserService.getAll();
+        const applications = await Application.findAll({
+            limit,
+            offset,
+            order: [ sort ],
+        });
+
+        const applicationsDto = applications.map(app => ({
+            id: app.id,
+            email: users.filter(u => u.id === app.user_id)[0]?.email,
+            comment: app.comment,
+            message: app.message,
+            status: app.status,
+            role: app.role,
+            createdAt: app.createdAt,
+        }));
+
+        return applicationsDto;
     };
 
     async delete(id) {

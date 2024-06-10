@@ -55,6 +55,6 @@ class TokenService {
         const tokenDate = await Token.findOne({ where: { refreshToken }});
         return tokenDate;
     };
-}
+};
 
 export default new TokenService();
