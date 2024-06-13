@@ -1,8 +1,15 @@
+import { validationResult } from 'express-validator';
 import ApplicationService from '../service/ApplicationService.js';
+import ApiError from '../error/ApiError.js'
 
 class ApplicationController {
     async create(req, res, next) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.badRequest('Ошибка при валидации', errors.array()));
+            };
+
             const { user_id, message, status } = req.body;
             const ApplicationData = await ApplicationService.create(user_id, message, status);
     
@@ -27,6 +34,18 @@ class ApplicationController {
         try {
             let { sort, page, limit } = req.query;
             const applications = await ApplicationService.getAll(sort, limit, page);
+
+            return res.json(applications);
+        } catch (err) {
+            next(err);
+        };
+    };
+
+    async getЕheirApplications(req, res, next) {
+        try {
+            let { id } = req.params;
+            const applications = await ApplicationService.getЕheirApplications(id);
+            
             return res.json(applications);
         } catch (err) {
             next(err);

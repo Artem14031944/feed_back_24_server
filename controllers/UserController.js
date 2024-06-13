@@ -5,13 +5,15 @@ import ApiError from "../error/ApiError.js";
 class UserController {
     async registration(req, res, next) {
         try {
-            const erros = validationResult(req);
-            if (!erros.isEmpty()) {
-                return next(ApiError.badRequest('Ошибка при валидации', erros.array()));
-            }
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.badRequest('Ошибка при валидации', errors.array()));
+            };
+
             const { email, name, role, password } = req.body;
             const userData = await UserService.registration(email, name, role, password);
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+
             return res.json(userData);
         } catch(err) {
             next(err);
@@ -23,11 +25,12 @@ class UserController {
             const erros = validationResult(req);
             if (!erros.isEmpty()) {
                 return next(ApiError.badRequest('Ошибка при валидации', erros.array()));
-            }
+            };
 
             const { email, password } = req.body;
             const userData = await UserService.login(email, password);
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+
             return res.json(userData);
         } catch(err) {
             next(err);
@@ -39,6 +42,7 @@ class UserController {
             const { refreshToken } = req.cookies;
             const token = await UserService.logout(refreshToken);
             res.clearCookie('refreshToken');
+
             return res.json(token);
         } catch(err) {
             next(err);
@@ -50,6 +54,7 @@ class UserController {
             const { refreshToken } = req.cookies;
             const userData = await UserService.refresh(refreshToken);
             res.cookie('refreshToken', userData.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: true });
+
             return res.json(userData);
         } catch(err) {
             next(err);

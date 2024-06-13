@@ -1,5 +1,6 @@
 import { Application, User } from "../models/models.js"; 
 import { v4 } from 'uuid';
+import ApplicationDto from "../dtos/applicationDto.js";
 import MailService from '../service/MailService.js';
 import UserService from '../service/UserService.js';
 import ApiError from '../error/ApiError.js';
@@ -60,16 +61,15 @@ class ApplicattionService {
             order: [ sort ],
         });
 
-        const applicationsDto = applications.map(app => ({
-            id: app.id,
-            email: users.filter(u => u.id === app.user_id)[0]?.email,
-            comment: app.comment,
-            message: app.message,
-            status: app.status,
-            role: app.role,
-            createdAt: app.createdAt,
-        }));
+        const applicationsDto = applications.map(app => new ApplicationDto(app, users));
+        return applicationsDto;
+    };
 
+    async getЕheirApplications(id) {
+        const applications = await Application.findAll({ where: { user_id: id }});
+        const users = await UserService.getAll();
+
+        const applicationsDto = applications.map(app => new ApplicationDto(app, users));
         return applicationsDto;
     };
 
