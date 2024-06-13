@@ -1,4 +1,4 @@
-import { body, check } from 'express-validator';
+import { check } from 'express-validator';
 import { Router } from "express";
 import ListApplicationsMiddleware from "../middleware/ListApplicationsMiddleware.js"
 import AuthAndAccessMiddleware from "../middleware/AuthAndAccessMiddleware.js";

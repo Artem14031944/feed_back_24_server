@@ -11,9 +11,9 @@ class ApplicationController {
             };
 
             const { user_id, message, status } = req.body;
-            const ApplicationData = await ApplicationService.create(user_id, message, status);
+            const applications = await ApplicationService.create(user_id, message, status);
     
-            return res.json(ApplicationData);
+            return res.json(applications);
         } catch(err) {
             next(err);
         };

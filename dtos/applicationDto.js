@@ -5,7 +5,7 @@ class ApplicationDto {
     comment;
     email;
     role;
-    createdAt;
+    updatedAt;
 
     constructor(model, users) {
         this.id = model.id;
@@ -15,6 +15,7 @@ class ApplicationDto {
         this.email = users?.find(u => u.id === model.user_id)?.email,
         this.role = users?.find(u => u.id === model.user_id)?.role,
         this.createdAt = model.createdAt;
+        this.updatedAt = model.updatedAt;
     };
 };
 

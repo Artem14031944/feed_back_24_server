@@ -12,7 +12,9 @@ class ApplicattionService {
         if (!application) {
             throw ApiError.badRequest('Не удалось создать заявку');
         };
-        return application;
+
+        const applicationsDto = this.getЕheirApplications(user_id);
+        return applicationsDto;
     };
 
     async resolved(reqBody, id) {
@@ -21,7 +23,7 @@ class ApplicattionService {
             throw ApiError.badRequest('Такая заявка отсусвует');
         };         
 
-        const user = await User.findOne({where: { id : application.user_id }});
+        const user = await User.findOne({ where: { id : application.user_id } });
         const uesrDto = new UserDto(user);
         const link = `${process.env.CLIENT_URL}/api/${v4()}`;
 
@@ -50,16 +52,12 @@ class ApplicattionService {
         };
 
         page = +page || 1;
-        limit = +limit || 25;
+        limit = +limit || 35;
         sort = sortBy || ['createdAt', 'ASC'];
         let offset = page * limit - limit;
 
         const users = await UserService.getAll();
-        const applications = await Application.findAll({
-            limit,
-            offset,
-            order: [ sort ],
-        });
+        const applications = await Application.findAll({ limit, offset, order: [ sort ] });
 
         const applicationsDto = applications.map(app => new ApplicationDto(app, users));
         return applicationsDto;
