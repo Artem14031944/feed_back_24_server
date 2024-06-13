@@ -1,7 +1,7 @@
 import { check } from 'express-validator';
 import { Router } from "express";
-import ListApplicationsMiddleware from "../middleware/ListApplicationsMiddleware.js"
-import AuthAndAccessMiddleware from "../middleware/AuthAndAccessMiddleware.js";
+import GetListApplicationsMiddleware from "../middleware/ApplicationMiddlewaer/GetListApplicationsMiddleware.js"
+import UserAuthMiddleware from "../middleware/UserMiddleware/UserAuthMiddleware.js";
 import ApplicationsController from "../controllers/ApplicationsController.js";
 
 const router = new Router();
@@ -12,7 +12,7 @@ router.post('/create',
 );
 router.patch('/resolved/:id', ApplicationsController.resolved);
 router.delete('/delete/:id', ApplicationsController.delete);
-router.get('/get_all_applications', AuthAndAccessMiddleware, ApplicationsController.getAll);
-router.get('/get_applications/:id', ListApplicationsMiddleware, ApplicationsController.getЕheirApplications);
+router.get('/get_all_applications', UserAuthMiddleware, ApplicationsController.getAll);
+router.get('/get_applications/:id', GetListApplicationsMiddleware, ApplicationsController.getЕheirApplications);
 
 export default router;

@@ -13,7 +13,7 @@ class ApplicattionService {
             throw ApiError.badRequest('Не удалось создать заявку');
         };
 
-        const applicationsDto = this.getЕheirApplications(user_id);
+        const applicationsDto = this.getApplicationsDto(user_id);
         return applicationsDto;
     };
 
@@ -63,11 +63,8 @@ class ApplicattionService {
         return applicationsDto;
     };
 
-    async getЕheirApplications(id) {
-        const applications = await Application.findAll({ where: { user_id: id }});
-        const users = await UserService.getAll();
-
-        const applicationsDto = applications.map(app => new ApplicationDto(app, users));
+    async getЕheirApplications(user_id) {
+        const applicationsDto = this.getApplicationsDto(user_id);
         return applicationsDto;
     };
 
@@ -75,6 +72,14 @@ class ApplicattionService {
         const deletedApplication = await Application.destroy({ where: { id } });
         return deletedApplication;
     }; 
+
+    async getApplicationsDto(user_id) {
+        const applications = await Application.findAll({ where: { user_id } });
+        const users = await UserService.getAll();
+
+        const applicationsDto = applications.map(app => new ApplicationDto(app, users));
+        return applicationsDto;
+    };
 };
 
 export default new ApplicattionService();

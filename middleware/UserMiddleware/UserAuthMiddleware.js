@@ -1,10 +1,8 @@
-import TokenService from '../service/TokenService.js';
-import ApiError from '../error/ApiError.js';
+import TokenService from '../../service/TokenService.js';
+import ApiError from '../../error/ApiError.js';
 
 export default function(req, res, next) {
     try {
-        const { id } = req.params;
-
         const authorizationHeader = req.headers.authorization;
         if (!authorizationHeader) {
             return next(ApiError.unauthorizedError());
@@ -20,13 +18,13 @@ export default function(req, res, next) {
             return next(ApiError.unauthorizedError());
         };
 
-        if (+userData.id !== +id) {
+        if (userData.role !== 'ADMIN') {
             return next(ApiError.forbidden('Нет доступа'));
         };
 
         req.user = userData;
         next();
-    } catch(e) {
-        return next(ApiError.forbidden('Нет доступа'));
+    } catch(err) {
+        return next(ApiError.unauthorizedError());
     }
 };
