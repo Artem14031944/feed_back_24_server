@@ -7,13 +7,13 @@ class ApplicationController {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return next(ApiError.badRequest(errors.array()));
+                return next(ApiError.badRequest(errors.array().map(err => err.msg).join('\n')));
             };
 
             const { user_id, message, status } = req.body;
             const applications = await ApplicationService.create(user_id, message, status);
     
-            return res.json(applications);
+            return res.json({ message: 'Выполнено успешно', applications });
         } catch(err) {
             next(err);
         };
@@ -23,7 +23,7 @@ class ApplicationController {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return next(ApiError.badRequest(errors.array()));
+                return next(ApiError.badRequest(errors.array().map(err => err.msg).join('\n')));
             };
             const { id } = req.params;
             const applications = await ApplicationService.resolved(req.body, id);
