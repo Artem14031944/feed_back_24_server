@@ -7,7 +7,7 @@ class UserController {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return next(ApiError.badRequest('Ошибка при валидации', errors.array()));
+                return next(ApiError.badRequest(errors.array().map(err => err.msg).join('\n')));
             };
 
             const { email, name, role, password } = req.body;
@@ -22,9 +22,9 @@ class UserController {
 
     async login(req, res, next) {
         try {
-            const erros = validationResult(req);
-            if (!erros.isEmpty()) {
-                return next(ApiError.badRequest('Ошибка при валидации', erros.array()));
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.badRequest(errors.array().map(err => err.msg).join('\n')));
             };
 
             const { email, password } = req.body;

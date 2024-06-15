@@ -9,8 +9,8 @@ class ApiError extends Error {
         return new ApiError(500, message);
     };
 
-    static badRequest(message) {
-        return new ApiError(404, message);
+    static badRequest(message, messages = []) {
+        return new ApiError(404, message, messages);
     };
 
     static forbidden(message) {
