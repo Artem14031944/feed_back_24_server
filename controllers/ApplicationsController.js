@@ -7,7 +7,7 @@ class ApplicationController {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
-                return next(ApiError.badRequest('Ошибка при валидации', errors.array()));
+                return next(ApiError.badRequest(errors.array()));
             };
 
             const { user_id, message, status } = req.body;
@@ -21,10 +21,14 @@ class ApplicationController {
 
     async resolved(req, res, next) {
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.badRequest(errors.array()));
+            };
             const { id } = req.params;
             const applications = await ApplicationService.resolved(req.body, id);
     
-            return res.json({ message: 'Заявка рассмотрена', applications });
+            return res.json({ message: 'Выполнено успешно', applications });
         } catch (err) {
             next(err);
         };

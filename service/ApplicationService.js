@@ -27,7 +27,12 @@ class ApplicattionService {
         const uesrDto = new UserDto(user);
         const link = `${process.env.CLIENT_URL}/api/${v4()}`;
 
-        await MailService.sendActivationMail(uesrDto, link, {... reqBody});
+        try {
+            await MailService.sendActivationMail(uesrDto, link, {... reqBody});
+        } catch(e) {
+            throw ApiError.invalidMailbox();
+        }
+       
         await Application.update({ ...reqBody, status: 'Resolved' }, { where: { id } });
 
         const allApplication = this.getAll();
